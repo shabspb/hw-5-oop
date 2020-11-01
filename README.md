@@ -1,3 +1,7 @@
+To check out this homework in codepen, please follow the link:
+
+https://codepen.io/shabspb/pen/YzWaozQ
+
 # Homework #5 OOP, prototype inheritance
 ## Deadline 03.11
 ### Create menu
