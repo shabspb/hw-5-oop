@@ -1,37 +1,31 @@
+// this is a new link to my solution:
+// https://codepen.io/shabspb/pen/gOMQPYg
+
 // MenuItems
 
-function MenuItem(type, stuffing) {
+function MenuItem(type) {
     this.type = type;
-    this.stuffing = stuffing;
     this.name = type.name;
-    this.weight = type.weight;
-    this.price = type.price;
-    this.calories = type.calories;
 }
 
 MenuItem.prototype.getType = function () {
     return this.type;
 };
 
-MenuItem.prototype.getStuffing = function () {
-    return this.stuffing;
-};
-
 MenuItem.prototype.calculatePrice = function () {
-    return this.type.price + this.stuffing.price;
+    return this.type.price;
 };
 
 MenuItem.prototype.calculateCalories = function () {
-    return this.type.calories + this.stuffing.calories;
+    return this.type.calories;
 };
 
 // Hamburgers
 
-function Hamburger(type) {
+function Hamburger(type, stuffing) {
     MenuItem.apply(this, arguments);
+    this.stuffing = stuffing;
     this.name = this.type.name + ' with ' + this.stuffing.name;
-    this.price = this.type.price + this.stuffing.price;
-    this.calories = this.type.calories + this.stuffing.calories;
 }
 
 Hamburger.prototype = Object.create(MenuItem.prototype);
@@ -67,11 +61,22 @@ Hamburger.STUFFING_POTATO = {
     calories: 10
 };
 
+Hamburger.prototype.getStuffing = function () {
+    return this.stuffing;
+};
+
+Hamburger.prototype.calculatePrice = function () {
+    return MenuItem.prototype.calculatePrice.call(this) + this.getStuffing().price;
+};
+
+Hamburger.prototype.calculateCalories = function () {
+    return MenuItem.prototype.calculateCalories.call(this) + this.getStuffing().calories;
+};
+
 // Salads
 
 function Salad(type, weight) {
-    MenuItem.call(this, type);
-    this.price = (type.price * weight) / 100;
+    MenuItem.apply(this, arguments);
     this.weight = weight;
 }
 
@@ -89,15 +94,20 @@ Salad.OLIVIE = {
     calories: 80
 };
 
+Salad.prototype.getWeight = function () {
+    return this.weight;
+};
+
 Salad.prototype.calculatePrice = function () {
-    return (this.type.price * this.weight) / 100;
+    return MenuItem.prototype.calculatePrice.call(this) * this.getWeight() / 100;
 };
 
 Salad.prototype.calculateCalories = function () {
-    return (this.type.calories * this.weight) / 100;
+    return MenuItem.prototype.calculateCalories.call(this) * this.getWeight() / 100;
 };
 
 // Drinks
+
 function Drink(type) {
     MenuItem.apply(this, arguments);
 }
@@ -110,18 +120,11 @@ Drink.COLA = {
     price: 50,
     calories: 40
 };
+
 Drink.COFFEE = {
     name: 'Coffee',
     price: 80,
     calories: 20
-};
-
-Drink.prototype.calculatePrice = function () {
-    return this.type.price;
-};
-
-Drink.prototype.calculateCalories = function () {
-    return this.type.calories;
 };
 
 // Order
@@ -192,7 +195,7 @@ Order.prototype.getOrder = function () {
     var wholeOrder = '';
     var generalTextOrder = 'Your order is:';
     this.order.forEach(function (item) {
-        wholeOrder += '\n' + item.name + ' : ' + item.price + ' tug' + ' / ' + item.calories + ' cal;';
+        wholeOrder += '\n' + item.name + ';';
     });
     var showOrder = generalTextOrder + wholeOrder + ' \nTotal: ' + this.calculateTotalPrice() + ' tug / ' + this.calculateTotalCalories() + ' cal;';
     return console.log(showOrder);
